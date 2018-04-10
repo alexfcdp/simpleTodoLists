@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:head>
+    <title>Todo Lists</title>
+</h:head>
+<body>
+<ui:composition template="/WEB-INF/templates/template.xhtml">
+    <ui:define name="content">
+        <f:metadata>
+            <f:viewAction action="#{projectsBean.init()}" />
+            <f:viewAction action="#{tasksBean.init()}" />
+        </f:metadata>
+        <div align="center" >
+            <h:form id="form_center" onkeypress="if (event.keyCode == 13) {return false;}">
+                <p:growl id="msgs" showDetail="true" />
+                <p:dialog header="Create Project" widgetVar="projectDialog" modal="true" resizable="false" closable="true" >
+               <p:outputPanel style="text-align:center">
+                   <p:panelGrid columns="2" columnClasses="label,value">
+                       <p:inputText id="idNamePtr" value="#{projectsBean.name}" placeholder="Project name" required="true" />
+                       <p:commandButton value="Add" process="@this,idNamePtr"  action="#{projectsBean.createProject()}" update=":form_center:idNamePtr msgs" />
+                   </p:panelGrid>
+               </p:outputPanel>
+           </p:dialog>
+
+                <p:dashboard id="board" model="#{projectsBean.model}" style="width: 700px" >
+
+                    <p:ajax event="reorder" listener="#{projectsBean.handleReorder}" update="msgs" />
+
+                    <c:forEach
+                            items="#{projectsBean.projectsList}" var="item">
+                        <p:panel id="panel#{item.id}" style="text-align: left; margin-bottom: 10px;" closable="false" toggleable="false" >
+
+                            <f:facet name="header">
+
+                                <p:commandButton id="addPrB#{item.id}" process="@this" oncomplete="PF('projectDialog').show()" icon="ui-icon-plus" style="background:none;margin-left: -5px" styleClass="ui-corner-all ui-state-default" title="Create Project"/>
+
+                                <p:commandButton id="delH#{item.id}" action="#{projectsBean.deleteProject(item.id)}" process="@this"  title="Delete" icon="ui-icon-trash" style="background:none;" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"/>
+
+                                <h:outputText id="inpt1Pr#{item.id}" value="#{item.name}" style="margin-left: 10px" />
+                                <p:commandButton id="btnInP#{item.id}" process="@this"  action="#{projectsBean.select(item)}" update=":form_center:projEdit#{item.id}" oncomplete="PF('prDial#{item.id}').show()" icon="ui-icon-pencil" title="Edit" style="background:none;" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default">
+                                </p:commandButton>
+                                <p:overlayPanel id="owerP#{item.id}" widgetVar="prDial#{item.id}"  showEffect="fade" hideEffect="fade" dismissable="false" showCloseIcon="true">
+                                    <p:outputPanel id="projEdit#{item.id}" style="text-align:center;">
+                                        <p:panelGrid id="pnlGrP#{item.id}"  columns="2" rendered="#{not empty projectsBean.select(item)}" columnClasses="label,value">
+
+                                            <p:inputText id="inptPr#{item.id}" value="#{projectsBean.selectedProject.name}" required="true" />
+                                            <p:commandButton id="updPr#{item.id}" value="Edit" process="@this,inptPr#{item.id}"  action="#{projectsBean.editProject(projectsBean.selectedProject)}" update=":form_center:inptPr#{item.id} msgs" />
+                                        </p:panelGrid>
+                                    </p:outputPanel>
+                                </p:overlayPanel>
+                            </f:facet>
+
+                            <p:dataTable id="task#{item.id}" var="task" value="#{tasksBean.getTaskList(item.id)}" draggableRows="true" widgetVar="tableWidget#{item.id}" >
+
+                                <p:ajax event="rowReorder" listener="#{tasksBean.onRowSelect(item.id)}"  />
+                                <p:ajax event="rowReorder" listener="#{tasksBean.onRowReorder}" />
+
+                                <f:facet name="header" >
+                                    <p:growl id="msgs2" showDetail="true" />
+
+                                    <p:commandButton id="calenBtn#{item.id}" process="@this" icon="ui-icon-calendar" style="background:none; margin-left:-10px" styleClass="ui-corner-all ui-state-default"  title="Calendar"/>
+                                    <p:overlayPanel id="calnPanel#{item.id}" for="calenBtn#{item.id}" widgetVar="overCal#{item.id}"
+                                                    dismissable="true" showCloseIcon="true">
+                                        <p:calendar id="inline#{item.id}" mode="inline" mindate="today"  >
+                                            <p:ajax event="dateSelect" listener="#{tasksBean.onDateSelect}" update="msgs2" oncomplete="PF('overCal#{item.id}').hide()"   />
+                                        </p:calendar>
+                                    </p:overlayPanel>
+
+                                    <p:inputText id="txt#{item.id}" value="#{tasksBean.name}"
+                                                 placeholder="Start typing here to create a task..."
+                                                 style="width: 510px; margin-left: 5px">
+                                       <!-- <f:validateLength minimum="2" /> -->
+                                        <p:ajax event="blur" listener="#{tasksBean.wtireTask()}" />
+                                    </p:inputText>
+                                    <p:commandButton id="btn#{item.id}" process="@this,txt#{item.id}" value="Add Task" update="txt#{item.id} msgs2" action="#{tasksBean.createTask(item)}" style="margin-left: 3px" />
+                                </f:facet>
+                                <p:column style="width:20px">
+                                    <p:selectBooleanCheckbox value="#{task.status}" title="Executed">
+                                        <p:ajax  listener="#{tasksBean.editReadyTask(task,task.status)}" />
+                                    </p:selectBooleanCheckbox>
+                                </p:column>
+
+                                <p:column>
+                                   <h:outputText value="#{task.name}"/>
+                                </p:column>
+
+                               <!-- <p:column style="width:80px">
+                                        <p:rating value="#{task.rating}" disabled="true" />
+                                </p:column>-->
+
+                                <p:column style="width:75px; text-align:center;">
+                                    <h:outputText value="#{tasksBean.formatDate(task.date)}"/>
+                                </p:column>
+
+                                <p:column style="width:64px;">
+                                        <p:commandButton id="btnEdit#{item.id}" update=":form_center:taskDetail :form_center:inpDial" process="@this" oncomplete="PF('taskDialog').show()" icon="ui-icon-pencil" style="border-width:0;background:none;" title="Edit">
+                                            <f:setPropertyActionListener value="#{task}" target="#{tasksBean.selectedTask}" />
+                                        </p:commandButton>
+
+                                    <p:commandButton id="btnDel#{item.id}" icon="ui-icon-trash" style="border-width:0;background:none;" process="@this" action="#{tasksBean.deleteTask(task.id,item.id)}" title="Delete">
+                                    </p:commandButton>
+                                </p:column>
+
+                            </p:dataTable>
+                        </p:panel>
+                    </c:forEach>
+
+                </p:dashboard>
+
+                <p:dialog header="Task edit" widgetVar="taskDialog" modal="true" resizable="false" closable="true" >
+
+                    <p:ajax event="close" listener="#{tasksBean.closeDialog(tasksBean.selectedTask.projects.id)}" />
+
+                    <p:outputPanel id="taskDetail" style="text-align:center;" >
+
+                        <p:panelGrid id="panelGrid" columns="2" rendered="#{not empty tasksBean.selectedTask}" columnClasses="label,value">
+
+                            <h:outputText value="Name:"/>
+                            <p:inputText id="inpDial" value="#{tasksBean.selectedTask.name}" style="width: 180px;" required="true" >
+                            </p:inputText>
+
+                            <h:outputText value="Priority:" />
+                            <p:rating id="rating" value="#{tasksBean.selectedTask.rating}" >
+                            </p:rating>
+
+                            <h:outputText value="Deadline:" />
+                            <p:calendar id="calDial" value="#{tasksBean.selectedTask.date}" showOn="button" pattern="dd.MM.yyyy" mask="true" mindate="today" >
+                            </p:calendar>
+
+                            <p:growl id="msgDialog" showDetail="true" />
+                            <p:commandButton id="cbtn" value="Edit"  process="@this,inpDial,calDial,rating" action="#{tasksBean.updateTasks(tasksBean.selectedTask)}" update="panelGrid msgDialog" style="width: 100px" />
+                        </p:panelGrid>
+                    </p:outputPanel>
+                </p:dialog>
+                <div style="clear:both" />
+            </h:form>
+        </div>
+    </ui:define>
+    <ui:define name="button">
+         <h:form id="form_btn" >
+        <p:commandButton style="height: 35px" process="@this" oncomplete="PF('projectDialog').show()" value="Add TODO List" icon="ui-icon-plus" />
+         </h:form>
+    </ui:define>
+</ui:composition>
+</body>
+</html>

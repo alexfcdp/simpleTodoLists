@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE html
+        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <title>Login</title>
+</h:head>
+
+<h:body>
+
+    <p:dialog header="ВХОД В СИСТЕМУ" widgetVar="dlg" modal="true"
+              minHeight="250" minWidth="300" visible="true" closable="false" resizable="false">
+        <h:form id="loginForm">
+            <p:growl id="msg"></p:growl>
+            <h:panelGrid columns="2">
+                <h:outputText value="Login: *" />
+                <p:inputText value="#{userBean.login}" required="true"  />
+                <h:outputText value="Password: *    "  />
+                <p:password value="#{userBean.password}" required="true" />
+                <p:commandButton action="#{userBean.doLogin}" value="Sing in" update="loginForm" >
+                </p:commandButton>
+                <p:commandButton action="#{userBean.createUser}" value="Create user" update="loginForm"  >
+                </p:commandButton>
+            </h:panelGrid>
+    </h:form>
+    </p:dialog>
+
+</h:body>
+
+</html>

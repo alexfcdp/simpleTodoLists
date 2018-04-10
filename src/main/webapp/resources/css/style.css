@@ -1,0 +1,114 @@
+* {
+	margin: 0;
+	padding: 0;
+}
+html {
+	height: 100%;
+}
+article, aside, details, figcaption, figure, footer, header, hgroup, main, nav, section, summary {
+	display: block;
+}
+body {
+	font: 11px/14px Arial, sans-serif;
+	height: 100%;
+}
+.wrapper {
+	min-width: 500px;
+	max-width: 1000px;
+	margin: 0 auto;
+	min-height: 100%;
+	height: auto !important;
+	height: 100%;
+	background: url("#{facesContext.externalContext.request.contextPath}/resources/images/fon.png") no-repeat;
+	background-size: cover;
+}
+
+.header {
+	height: 120px;
+}
+
+.content {
+	padding: 0 0 90px;
+}
+
+.footer {
+	margin: -90px auto 0;
+	min-width: 500px;
+	max-width: 1000px;
+	height: 90px;
+	position: relative;
+}
+
+.button {
+    height: 40px;
+    padding-top: 5px;
+}
+
+.footer_txt {
+    color: white;
+    height: 20px;
+    font-family: Nirmala UI;
+    font-size: 12px;
+    text-align: center;
+	box-sizing: border-box;
+	padding: 10px;
+}
+
+.logo_title {
+	color: black;
+	height: 30px;
+	font-weight: bold;
+	font-family: Nirmala UI;
+	text-transform: uppercase;
+	line-height: 1.5;
+	font-size: 22px;
+	padding-top: 20px;
+	text-align: center;
+}
+.logo_title2 {
+	color: black;
+	height: 30px;
+	font-family: Nirmala UI;
+	text-transform: uppercase;
+	font-size: 16px;
+	padding-top: 5px;
+	text-align: center;
+}
+
+.ButtonStyle{
+	color: #1560BD;
+	height: 20px;
+	font-family: estrangelo edessa;
+	font-size: 20px;
+	cursor:pointer;
+	padding-right: 40px;
+	margin-bottom: -30px;
+	margin-left: 20px;
+}
+.ButtonStyle:hover {
+	color: rgba(252, 255, 123, 0.81);
+}
+
+.new_btn{
+	color: white;
+	background: #1560BD;
+	height: 30px;
+	cursor:pointer;
+}
+.new_btn:hover {
+	color: rgba(255, 0, 9, 0.81);
+}
+
+.user{
+	color: #1560BD;
+	height: 20px;
+	font-family: estrangelo edessa;
+	text-decoration:underline;
+	font-size: 20px;
+    margin-left: -30px;
+}
+
+.calendar .ui-datepicker-inline{
+	width: 250px !important;
+	background:none;
+}

@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="simpleTodoListsge:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <root id="archive" name="simpleTodoListsge-1.0.war">
+      <element id="artifact" artifact-name="simpleTodoListsge:war exploded" />
+    </root>
+  </artifact>
+</component>
